@@ -1,6 +1,7 @@
 ﻿using ClubManagementSystem.Repository.Basic;
 using ClubManagementSystem.Repository.DBContext;
 using ClubManagementSystem.Repository.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,11 @@ namespace ClubManagementSystem.Repository.Repositories
             if (!string.IsNullOrEmpty(account.Email))
                 query = query.Where(a => a.Email.Contains(account.Email));    
             return query.OrderBy(a => a.Id);
+        }
+
+        public async Task<Account?> GetUserByUsername(string username)
+        {
+            return await _context.Accounts.FirstOrDefaultAsync(u => u.Username == username);
         }
     }
 }
