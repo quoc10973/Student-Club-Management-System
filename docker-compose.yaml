@@ -24,6 +24,10 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__DefaultConnection=Server=db;Database=ClubManagementSystem;User Id=sa;Password=Prn232Block3w@;TrustServerCertificate=True;
+      - JwtConfig__Issuer=StudenClubManagementSystem
+      - JwtConfig__Audience=StudenClubManagementUser
+      - JwtConfig__Key=W$7gN!f82Qz@Rk3L^p0Xv91#HcT*Mb46sYjUeDZwAqF5rP8hC
+      - JwtConfig__ExpireMinutes=30
     ports:
       - "8080:8080"
       - "8081:8081"

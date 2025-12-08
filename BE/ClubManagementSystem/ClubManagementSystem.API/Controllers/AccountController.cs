@@ -3,6 +3,7 @@ using ClubManagementSystem.Service.Interface;
 using ClubManagementSystem.Service.Models.Common;
 using ClubManagementSystem.Service.Models.Request;
 using ClubManagementSystem.Service.Models.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

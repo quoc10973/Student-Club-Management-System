@@ -198,5 +198,10 @@ namespace ClubManagementSystem.Service.Implement
         {
             return BCrypt.Net.BCrypt.HashPassword(password);
         }
+
+        public async Task<Account?> GetByUsernameAsync(string username)
+        {
+            return await _accountRepository.GetUserByUsername(username);
+        }
     }
 }

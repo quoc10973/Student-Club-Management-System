@@ -1,5 +1,6 @@
 ﻿using ClubManagementSystem.Repository.Entities;
 using ClubManagementSystem.Service.Models.Request;
+using ClubManagementSystem.Service.Models.Response;
 using Mapster;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,9 @@ namespace ClubManagementSystem.Service.Mappings
 
             // create/update request -> entity
             config.NewConfig<AccountRequest, Account>();
+
+            // entity -> login response
+            config.NewConfig<Account, LoginResponse>();
         }
 
     }
