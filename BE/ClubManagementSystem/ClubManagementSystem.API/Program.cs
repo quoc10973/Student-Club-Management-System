@@ -109,8 +109,10 @@ builder.Services.AddDbContext<ClubManagementSystemContext>(options =>
 builder.Services.AddScoped<AccountRepository>();
 builder.Services.AddScoped<StudentRepository>();
 builder.Services.AddScoped<DepartmentRepository>();
+builder.Services.AddScoped<ClubRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<IClubService, ClubService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 
