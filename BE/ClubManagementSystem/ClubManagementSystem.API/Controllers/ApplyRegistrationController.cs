@@ -1,31 +1,28 @@
-using ClubManagementSystem.Repository.Entities;
 using ClubManagementSystem.Service.Interface;
-using ClubManagementSystem.Service.Models.Common;
 using ClubManagementSystem.Service.Models.Request;
 using ClubManagementSystem.Service.Models.Response;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClubManagementSystem.API.Controllers
 {
-    [Route("api/students")]
+    [Route("api/apply-registrations")]
     [ApiController]
-    public class StudentController : ControllerBase
+    public class ApplyRegistrationController : ControllerBase
     {
-        private readonly IStudentService _studentService;
-        public StudentController(IStudentService studentService)
+        private readonly IApplyRegistrationService _applyRegistrationService;
+
+        public ApplyRegistrationController(IApplyRegistrationService applyRegistrationService)
         {
-            _studentService = studentService;
+            _applyRegistrationService = applyRegistrationService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<object>>> GetAllStudents([FromQuery] StudentFilterRequest filter, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<object>>> GetAllApplyRegistrations([FromQuery] ApplyRegistrationFilterRequest filter, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                var students = await _studentService.GetAllStudents(filter, page, pageSize);
-                return Ok(students);
+                var applies = await _applyRegistrationService.GetAllApplyRegistrations(filter, page, pageSize);
+                return Ok(applies);
             }
             catch (Exception ex)
             {
@@ -34,11 +31,11 @@ namespace ClubManagementSystem.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<StudentResponse>> GetStudentById(int id)
+        public async Task<ActionResult<ApplyRegistrationResponse>> GetApplyRegistrationById(int id)
         {
             try
             {
-                var result = await _studentService.GetStudentByIdAsync(id);
+                var result = await _applyRegistrationService.GetApplyRegistrationByIdAsync(id);
                 if (result.Success)
                 {
                     return Ok(result.Data);
@@ -55,7 +52,7 @@ namespace ClubManagementSystem.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<StudentResponse>> CreateStudent([FromBody] StudentRequest request)
+        public async Task<ActionResult<ApplyRegistrationResponse>> CreateApplyRegistration([FromBody] ApplyRegistrationRequest request)
         {
             try
             {
@@ -63,10 +60,11 @@ namespace ClubManagementSystem.API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                var result = await _studentService.CreateAsync(request);
+
+                var result = await _applyRegistrationService.CreateAsync(request);
                 if (result.Success)
                 {
-                    return CreatedAtAction(nameof(GetAllStudents), new { id = result.Data.Id }, result.Data);
+                    return CreatedAtAction(nameof(GetAllApplyRegistrations), new { id = result.Data.Id }, result.Data);
                 }
                 else
                 {
@@ -80,7 +78,7 @@ namespace ClubManagementSystem.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<StudentResponse>> UpdateStudent(int id, [FromBody] StudentRequest request)
+        public async Task<ActionResult<ApplyRegistrationResponse>> UpdateApplyRegistration(int id, [FromBody] ApplyRegistrationRequest request)
         {
             try
             {
@@ -88,7 +86,8 @@ namespace ClubManagementSystem.API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                var result = await _studentService.UpdateAsync(id, request);
+
+                var result = await _applyRegistrationService.UpdateAsync(id, request);
                 if (result.Success)
                 {
                     return Ok(result.Data);
@@ -105,18 +104,18 @@ namespace ClubManagementSystem.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteStudent(int id)
+        public async Task<ActionResult> DeleteApplyRegistration(int id)
         {
             try
             {
-                var result = await _studentService.DeleteAsync(id);
+                var result = await _applyRegistrationService.DeleteAsync(id);
                 if (result.Success)
                 {
                     return NoContent();
                 }
                 else
                 {
-                    return NotFound(result.Message);
+                    return BadRequest(result.Message);
                 }
             }
             catch (Exception ex)
@@ -126,6 +125,5 @@ namespace ClubManagementSystem.API.Controllers
         }
     }
 }
-
 
 

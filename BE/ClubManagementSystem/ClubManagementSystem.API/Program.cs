@@ -110,11 +110,17 @@ builder.Services.AddScoped<AccountRepository>();
 builder.Services.AddScoped<StudentRepository>();
 builder.Services.AddScoped<DepartmentRepository>();
 builder.Services.AddScoped<ClubRepository>();
+builder.Services.AddScoped<RegistrationRepository>();
+builder.Services.AddScoped<ApplyRegistrationRepository>();
+builder.Services.AddScoped<ClubMembershipRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IClubService, ClubService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+builder.Services.AddScoped<IApplyRegistrationService, ApplyRegistrationService>();
+builder.Services.AddScoped<IClubMembershipService, ClubMembershipService>();
 
 var app = builder.Build();
 
