@@ -13,6 +13,7 @@ namespace ClubManagementSystem.Service.Models.Request
 
         [Required(ErrorMessage = "Status is required")]
         [MaxLength(20, ErrorMessage = "Status cannot exceed 20 characters")]
+        [RegularExpression("^(Open|Close)$", ErrorMessage = "Status must be Open or Close")]
         public string? Status { get; set; }
 
         [MaxLength(255, ErrorMessage = "Note cannot exceed 255 characters")]
