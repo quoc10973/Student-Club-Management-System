@@ -19,6 +19,7 @@ namespace ClubManagementSystem.Service.Models.Request
 
         [Required(ErrorMessage = "Status is required")]
         [MaxLength(20, ErrorMessage = "Status cannot exceed 20 characters")]
+        [RegularExpression("^(Active|InActive)$", ErrorMessage = "Status must be Active or InActive")]
         public string? Status { get; set; }
     }
 

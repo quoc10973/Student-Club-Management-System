@@ -13,10 +13,12 @@ namespace ClubManagementSystem.Service.Models.Request
 
         [Required(ErrorMessage = "ClubRole is required")]
         [MaxLength(20, ErrorMessage = "ClubRole cannot exceed 20 characters")]
+        [RegularExpression("^(Leader|Member)$", ErrorMessage = "ClubRole must be Leader or Member")]
         public string? ClubRole { get; set; }
 
         [Required(ErrorMessage = "Status is required")]
         [MaxLength(20, ErrorMessage = "Status cannot exceed 20 characters")]
+        [RegularExpression("^(Active|InActive)$", ErrorMessage = "Status must be Active or InActive")]
         public string? Status { get; set; }
 
         [MaxLength(255, ErrorMessage = "Note cannot exceed 255 characters")]

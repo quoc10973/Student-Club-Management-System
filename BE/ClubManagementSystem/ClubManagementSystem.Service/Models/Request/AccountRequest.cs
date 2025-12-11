@@ -29,8 +29,10 @@ namespace ClubManagementSystem.Service.Models.Request
         public string? Password { get; set; }
 
         [Required(ErrorMessage = "Role is required")]
+        [RegularExpression("^(User|Admin)$", ErrorMessage = "Role must be User or Admin")]
         public string? Role { get; set; }
         [Required(ErrorMessage = "Status is required")]
+        [RegularExpression("^(Active|InActive|Deleted)$", ErrorMessage = "Status must be Active, InActive or Deleted")]
         public string? Status { get; set; }
     }
 
