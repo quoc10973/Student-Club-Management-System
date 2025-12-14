@@ -1,3 +1,4 @@
+using System;
 using ClubManagementSystem.Repository.Entities;
 using ClubManagementSystem.Service.Interface;
 using ClubManagementSystem.Service.Models.Common;
@@ -95,6 +96,10 @@ namespace ClubManagementSystem.API.Controllers
                 }
                 else
                 {
+                    if (result.Message != null && result.Message.Contains("not found", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return NotFound(result.Message);
+                    }
                     return BadRequest(result.Message);
                 }
             }
@@ -116,7 +121,11 @@ namespace ClubManagementSystem.API.Controllers
                 }
                 else
                 {
-                    return NotFound(result.Message);
+                    if (result.Message != null && result.Message.Contains("not found", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return NotFound(result.Message);
+                    }
+                    return BadRequest(result.Message);
                 }
             }
             catch (Exception ex)
@@ -126,7 +135,3 @@ namespace ClubManagementSystem.API.Controllers
         }
     }
 }
-
-
-
-
