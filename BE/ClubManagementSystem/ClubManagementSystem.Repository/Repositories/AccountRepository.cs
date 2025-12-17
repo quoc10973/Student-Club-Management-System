@@ -1,4 +1,4 @@
-﻿using ClubManagementSystem.Repository.Basic;
+using ClubManagementSystem.Repository.Basic;
 using ClubManagementSystem.Repository.DBContext;
 using ClubManagementSystem.Repository.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +39,11 @@ namespace ClubManagementSystem.Repository.Repositories
         public async Task<Account?> GetUserByUsername(string username)
         {
             return await _context.Accounts.FirstOrDefaultAsync(u => u.Username == username);
+        }
+
+        public async Task<Account?> GetByEmailAsync(string email)
+        {
+            return await _context.Accounts.FirstOrDefaultAsync(u => u.Email == email);
         }
     }
 }
