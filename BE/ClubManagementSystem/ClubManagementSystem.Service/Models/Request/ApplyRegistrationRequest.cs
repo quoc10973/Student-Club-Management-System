@@ -10,11 +10,6 @@ namespace ClubManagementSystem.Service.Models.Request
 
         [Required(ErrorMessage = "RegistrationId is required")]
         public int RegistrationId { get; set; }
-
-        [Required(ErrorMessage = "Status is required")]
-        [MaxLength(10, ErrorMessage = "Status cannot exceed 10 characters")]
-        [RegularExpression("^(Pending|Approved|Rejected)$", ErrorMessage = "Status must be Pending, Approved or Rejected")]
-        public string? Status { get; set; }
     }
 
     public class ApplyRegistrationFilterRequest
