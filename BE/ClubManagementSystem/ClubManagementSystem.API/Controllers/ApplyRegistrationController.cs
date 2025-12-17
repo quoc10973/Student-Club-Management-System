@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ClubManagementSystem.Service.Interface;
 using ClubManagementSystem.Service.Models.Request;
 using ClubManagementSystem.Service.Models.Response;
@@ -77,61 +77,35 @@ namespace ClubManagementSystem.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult<ApplyRegistrationResponse>> UpdateApplyRegistration(int id, [FromBody] ApplyRegistrationRequest request)
+        [HttpPost("{id}/approve")]
+        public async Task<IActionResult> Approve(int id)
         {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
+            var accountIdClaim = User.FindFirst("accountId");
+            if (accountIdClaim == null)
+                return Unauthorized("accountId claim not found in token.");
 
-                var result = await _applyRegistrationService.UpdateAsync(id, request);
-                if (result.Success)
-                {
-                    return Ok(result.Data);
-                }
-                else
-                {
-                    if (result.Message != null && result.Message.Contains("not found", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return NotFound(result.Message);
-                    }
-                    return BadRequest(result.Message);
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            if (!int.TryParse(accountIdClaim.Value, out var accountId))
+                return BadRequest("Invalid accountId.");
+
+            var result = await _applyRegistrationService.ApproveAsync(id, accountId);
+            return Ok(result);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteApplyRegistration(int id)
+        [HttpPost("{id}/reject")]
+        public async Task<IActionResult> Reject(int id)
         {
-            try
-            {
-                var result = await _applyRegistrationService.DeleteAsync(id);
-                if (result.Success)
-                {
-                    return NoContent();
-                }
-                else
-                {
-                    if (result.Message != null && result.Message.Contains("not found", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return NotFound(result.Message);
-                    }
-                    return BadRequest(result.Message);
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            var accountIdClaim = User.FindFirst("accountId");
+            if (accountIdClaim == null)
+                return Unauthorized("accountId claim not found in token.");
+
+            if (!int.TryParse(accountIdClaim.Value, out var accountId))
+                return BadRequest("Invalid accountId.");
+
+            var result = await _applyRegistrationService.RejectAsync(id, accountId);
+            return Ok(result);
         }
+
+
     }
 }
 

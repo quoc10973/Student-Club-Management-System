@@ -1,8 +1,9 @@
-﻿using System;
-using ClubManagementSystem.Service.Interface;
+﻿using ClubManagementSystem.Service.Interface;
 using ClubManagementSystem.Service.Models.Request;
 using ClubManagementSystem.Service.Models.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace ClubManagementSystem.API.Controllers
 {
@@ -15,6 +16,10 @@ namespace ClubManagementSystem.API.Controllers
         public ClubController(IClubService clubService)
         {
             _clubService = clubService;
+        }
+        public class SetLeaderRequest
+        {
+            public int StudentId { get; set; }
         }
 
         [HttpGet]
@@ -124,6 +129,44 @@ namespace ClubManagementSystem.API.Controllers
                     }
                     return BadRequest(result.Message);
                 }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("{clubId}/set-leader")]
+        public async Task<ActionResult> SetLeader(int clubId, [FromBody] SetLeaderRequest request)
+        {
+            try
+            {
+                var accountIdClaim = User.FindFirst("accountId") ?? User.FindFirst("Id");
+                if (accountIdClaim == null)
+                {
+                    return Unauthorized("accountId claim not found in token.");
+                }
+
+                if (!int.TryParse(accountIdClaim.Value, out var adminAccountId))
+                {
+                    return BadRequest("Invalid accountId in token.");
+                }
+
+                var result = await _clubService.SetLeaderAsync(clubId, request.StudentId, adminAccountId);
+                if (result.Success)
+                {
+                    return Ok(result.Message);
+                }
+
+                if (result.Message != null &&
+                    (result.Message.Contains("not found", StringComparison.OrdinalIgnoreCase) ||
+                     result.Message.Contains("does not belong", StringComparison.OrdinalIgnoreCase)))
+                {
+                    return NotFound(result.Message);
+                }
+
+                return BadRequest(result.Message);
             }
             catch (Exception ex)
             {

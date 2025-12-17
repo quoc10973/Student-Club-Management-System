@@ -18,10 +18,17 @@ namespace ClubManagementSystem.Service.Implement
     public class ClubService : IClubService
     {
         private readonly ClubRepository _clubRepository;
+        private readonly StudentRepository _studentRepository;
+        private readonly ClubMembershipRepository _clubMembershipRepository;
 
-        public ClubService(ClubRepository clubRepository)
+        public ClubService(
+            ClubRepository clubRepository,
+            StudentRepository studentRepository,
+            ClubMembershipRepository clubMembershipRepository)
         {
             _clubRepository = clubRepository;
+            _studentRepository = studentRepository;
+            _clubMembershipRepository = clubMembershipRepository;
         }
 
         public async Task<ApiResponse<ClubResponse>> CreateAsync(ClubRequest request)
@@ -228,5 +235,90 @@ namespace ClubManagementSystem.Service.Implement
                 Data = null
             };
         }
+        public async Task<ApiResponse<bool>> SetLeaderAsync(int clubId, int studentId, int adminAccountId)
+        {
+            // 1. Kiểm tra club tồn tại
+            var club = await _clubRepository.GetByIdAsync(clubId);
+            if (club == null)
+            {
+                return new ApiResponse<bool>
+                {
+                    Success = false,
+                    Message = "Club not found.",
+                    Data = false
+                };
+            }
+
+            // 2. Kiểm tra student tồn tại
+            var student = await _studentRepository.GetByIdAsync(studentId);
+            if (student == null)
+            {
+                return new ApiResponse<bool>
+                {
+                    Success = false,
+                    Message = "Student not found.",
+                    Data = false
+                };
+            }
+
+            // 3. Tìm membership của chính student này trong club
+            var membershipOfStudent = await _clubMembershipRepository
+                .FirstOrDefaultAsync(cm => cm.ClubId == clubId && cm.StudentId == studentId);
+
+            // 4. Nếu student chưa có membership trong club -> TẠO MỚI LEADER
+            if (membershipOfStudent == null)
+            {
+                var newMembership = new ClubMembership
+                {
+                    StudentId = studentId,
+                    ClubId = clubId,
+                    ClubRole = "Leader",
+                    Status = "Active",
+                    RequestedAt = DateTime.UtcNow,
+                    ApprovedAt = DateTime.UtcNow,
+                    ApprovedBy = adminAccountId,
+                    Note = "Leader assigned by admin"
+                };
+
+                var created = await _clubMembershipRepository.CreateAsync(newMembership);
+                if (created <= 0)
+                {
+                    return new ApiResponse<bool>
+                    {
+                        Success = false,
+                        Message = "Failed to add leader membership.",
+                        Data = false
+                    };
+                }
+            }
+            else
+            {
+                // 5. Student đã có membership trong club -> nâng lên Leader
+                membershipOfStudent.ClubRole = "Leader";
+                membershipOfStudent.Status = "Active";
+                membershipOfStudent.ApprovedAt = DateTime.UtcNow;
+                membershipOfStudent.ApprovedBy = adminAccountId;
+                membershipOfStudent.Note = "Promoted to leader by admin";
+
+                var updated = await _clubMembershipRepository.UpdateAsync(membershipOfStudent);
+                if (updated <= 0)
+                {
+                    return new ApiResponse<bool>
+                    {
+                        Success = false,
+                        Message = "Failed to update leader membership.",
+                        Data = false
+                    };
+                }
+            }
+
+            return new ApiResponse<bool>
+            {
+                Success = true,
+                Message = "Leader added to membership successfully.",
+                Data = true
+            };
+        }
+
     }
 }

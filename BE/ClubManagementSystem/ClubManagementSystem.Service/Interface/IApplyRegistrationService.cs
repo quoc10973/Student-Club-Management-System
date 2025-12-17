@@ -7,12 +7,13 @@ namespace ClubManagementSystem.Service.Interface
 {
     public interface IApplyRegistrationService
     {
-        Task<PagedResponse<object>> GetAllApplyRegistrations(ApplyRegistrationFilterRequest request, int page, int pageSize);
-        Task<ApiResponse<ApplyRegistrationResponse>> GetApplyRegistrationByIdAsync(int id);
         Task<ApiResponse<ApplyRegistrationResponse>> CreateAsync(ApplyRegistrationRequest request);
-        Task<ApiResponse<ApplyRegistrationResponse>> UpdateAsync(int id, ApplyRegistrationRequest request);
-        Task<ApiResponse<bool>> DeleteAsync(int id);
+        Task<ApiResponse<ApplyRegistrationResponse>> GetApplyRegistrationByIdAsync(int id);
+        Task<PagedResponse<object>> GetAllApplyRegistrations(ApplyRegistrationFilterRequest request, int page, int pageSize);
+        Task<ApiResponse<ApplyRegistrationResponse>> ApproveAsync(int applyRegistrationId, int currentAccountId);
+        Task<ApiResponse<ApplyRegistrationResponse>> RejectAsync(int applyRegistrationId, int currentAccountId);
     }
+
 }
 
 

@@ -3,6 +3,7 @@ using ClubManagementSystem.Repository.DBContext;
 using ClubManagementSystem.Repository.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace ClubManagementSystem.Repository.Repositories
 {
@@ -32,6 +33,16 @@ namespace ClubManagementSystem.Repository.Repositories
                 query = query.Where(m => m.ApprovedBy == membership.ApprovedBy);
 
             return query.OrderBy(m => m.Id);
+        }
+
+        public Task<bool> AnyAsync(Expression<Func<ClubMembership, bool>> predicate)
+        {
+            return _context.ClubMemberships.AnyAsync(predicate);
+        }
+
+        public Task<ClubMembership> FirstOrDefaultAsync(Expression<Func<ClubMembership, bool>> predicate)
+        {
+            return _context.ClubMemberships.FirstOrDefaultAsync(predicate);
         }
     }
 }

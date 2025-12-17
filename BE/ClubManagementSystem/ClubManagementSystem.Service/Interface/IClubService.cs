@@ -16,5 +16,7 @@ namespace ClubManagementSystem.Service.Interface
         Task<ApiResponse<ClubResponse>> CreateAsync(ClubRequest request);
         Task<ApiResponse<ClubResponse>> UpdateAsync(int id, ClubRequest request);
         Task<ApiResponse<bool>> DeleteAsync(int id);
+        Task<ApiResponse<bool>> SetLeaderAsync(int clubId, int studentId, int adminAccountId);
+
     }
 }
