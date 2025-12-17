@@ -27,6 +27,12 @@ namespace ClubManagementSystem.Repository.Repositories
 
             return query.OrderBy(a => a.Id);
         }
+        public Task<ApplyRegistration> GetByIdWithRegistrationAsync(int id)
+        {
+            return _context.ApplyRegistrations
+                .Include(a => a.Registration) 
+                .FirstOrDefaultAsync(a => a.Id == id);
+        }
     }
 }
 
