@@ -46,5 +46,12 @@ namespace ClubManagementSystem.Repository.Repositories
                 .OrderBy(d => d.Id)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<Deparment?> GetByCodeNameAsync(string codeName)
+        {
+            return await _context.Set<Deparment>()
+                .Where(d => d.CodeName == codeName)
+                .FirstOrDefaultAsync();
+        }
     }
 }
