@@ -108,26 +108,31 @@ namespace ClubManagementSystem.Service.Implement
             var entity = request.Adapt<Club>();
 
             // Logic filter theo role:
-            // - Nếu role = "User" (Student): chỉ thấy Public clubs + Private clubs cùng department
+            // - Nếu role = "User" (Student): chỉ thấy Active clubs + Public clubs (DeparmentId = null) + Private clubs cùng department
             // - Nếu role = "Admin" hoặc không có role: thấy tất cả (hoặc theo filter request)
             int? departmentIdForFilter = request.DeparmentId;
             bool? isPublicFilter = request.IsPublic;
+            bool onlyActive = false;
             
             if (accountId.HasValue && role == "User")
             {
+                // Role User: chỉ xem được Active clubs và không xem được club private của department khác
+                onlyActive = true;
+                
                 // Lấy Student từ AccountId để lấy DepartmentId
                 var student = await _studentRepository.GetByAccountIdAsync(accountId.Value);
-                if (student != null)
+                if (student != null && student.DeparmentId != 0)
                 {
-                    // Student chỉ thấy: Public clubs HOẶC Private clubs cùng department
-                    // Repository sẽ tự động filter: IsPublic = true OR DeparmentId = student.DeparmentId
+                    // Student chỉ thấy: 
+                    // - Public clubs (IsPublic = true AND DeparmentId = null) 
+                    // - Private clubs cùng department (IsPublic = false AND DeparmentId = student.DeparmentId)
                     departmentIdForFilter = student.DeparmentId;
                     // Không set IsPublic để repository tự động áp dụng logic: Public OR cùng department
                     isPublicFilter = null;
                 }
                 else
                 {
-                    // Nếu không tìm thấy Student, chỉ cho thấy Public clubs
+                    // Nếu không tìm thấy Student hoặc Student không có DepartmentId, chỉ cho thấy Public clubs
                     departmentIdForFilter = null;
                     isPublicFilter = true;
                 }
@@ -138,7 +143,8 @@ namespace ClubManagementSystem.Service.Implement
             var query = _clubRepository.GetFilteredClub(
                 entity,
                 isPublicFilter,
-                departmentIdForFilter
+                departmentIdForFilter,
+                onlyActive
             );
 
             IQueryable resultQuery = query;

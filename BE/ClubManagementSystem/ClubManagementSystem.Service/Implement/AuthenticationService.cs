@@ -268,32 +268,59 @@ namespace ClubManagementSystem.Service.Implement
                     }
 
                     // Tạo Student tương ứng cho account mới
-                    // Logic: Tìm department đầu tiên có Status = "Active" để set cho Student
-                    // Nếu không có department Active, lấy department đầu tiên (bất kỳ Status nào)
-                    // Code luôn là "SE0000" (mặc định), Student có thể update department và code về sau
-                    var defaultDepartment = await _departmentRepository.GetFirstActiveDepartmentAsync();
+                    // Logic: Lấy 8 ký tự cuối từ username (hoặc tất cả nếu < 8 ký tự), viết hoa 2 chữ cái đầu để tạo code
+                    // Tìm department theo CodeName trùng với 2 chữ cái đầu đã viết hoa
+                    Deparment department = null;
+                    string studentCode = null;
 
-                    if (defaultDepartment == null)
+                    // Lấy 8 ký tự cuối cùng từ username (hoặc tất cả nếu username < 8 ký tự)
+                    var last8Chars = username.Length >= 8 
+                        ? username.Substring(username.Length - 8)
+                        : username;
+                    
+                    // Viết hoa 2 chữ cái đầu của chuỗi đó (nếu có ít nhất 2 ký tự và là chữ cái)
+                    if (last8Chars.Length >= 2 && char.IsLetter(last8Chars[0]) && char.IsLetter(last8Chars[1]))
                     {
-                        // Nếu không có department Active, lấy department đầu tiên
-                        defaultDepartment = await _departmentRepository.GetFirstDepartmentAsync();
+                        var firstTwoUpper = last8Chars.Substring(0, 2).ToUpper();
+                        var remainingChars = last8Chars.Substring(2);
+                        studentCode = firstTwoUpper + remainingChars;
+
+                        // Tìm department theo CodeName trùng với 2 chữ cái đầu đã viết hoa
+                        department = await _departmentRepository.GetByCodeNameAsync(firstTwoUpper);
                     }
 
-                    if (defaultDepartment != null)
+                    // Nếu không tìm thấy department hoặc không thể tạo code từ username
+                    // Fallback về logic cũ: set default giá trị
+                    if (department == null || string.IsNullOrEmpty(studentCode))
                     {
-                        // Tạo Code từ CodeName của department + "0000"
-                        // Nếu department không có CodeName, dùng mặc định "SE0000"
-                        var departmentCode = !string.IsNullOrEmpty(defaultDepartment.CodeName) 
-                            ? defaultDepartment.CodeName 
-                            : "SE";
-                        var studentCode = $"{departmentCode}0000";
+                        department = await _departmentRepository.GetFirstActiveDepartmentAsync();
+                        if (department == null)
+                        {
+                            department = await _departmentRepository.GetFirstDepartmentAsync();
+                        }
+                        
+                        // Nếu vẫn không có department, dùng code mặc định
+                        if (department != null)
+                        {
+                            var departmentCode = !string.IsNullOrEmpty(department.CodeName) 
+                                ? department.CodeName 
+                                : "SE";
+                            studentCode = $"{departmentCode}0000";
+                        }
+                        else
+                        {
+                            studentCode = "SE0000";
+                        }
+                    }
 
+                    if (department != null && !string.IsNullOrEmpty(studentCode))
+                    {
                         var studentRequest = new StudentRequest
                         {
                             AccountId = account.Id,
-                            DeparmentId = defaultDepartment.Id, // Set department đầu tiên có Status Active (hoặc department đầu tiên nếu không có Active)
+                            DeparmentId = department.Id,
                             Status = "Active",
-                            Code = studentCode // Code từ CodeName của department (ví dụ: SE0000, SA0000) hoặc SE0000 nếu không có CodeName
+                            Code = studentCode
                         };
 
                         var createStudentResult = await _studentService.CreateAsync(studentRequest);
