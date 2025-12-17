@@ -38,7 +38,7 @@ namespace ClubManagementSystem.Service.Implement
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim("Id", account.Id.ToString()),
+                    new Claim("accountId", account.Id.ToString()),
                     new Claim(ClaimTypes.Name, account.Username),
                     new Claim(ClaimTypes.Role, account.Role.ToString())
                 }),

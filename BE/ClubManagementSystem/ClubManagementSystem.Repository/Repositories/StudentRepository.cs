@@ -31,6 +31,11 @@ namespace ClubManagementSystem.Repository.Repositories
                 query = query.Where(s => s.Code.Contains(student.Code));
             return query.OrderBy(s => s.Id);
         }
+        public Task<Student> GetByAccountIdAsync(int accountId)
+        {
+            return _context.Students
+                .FirstOrDefaultAsync(s => s.AccountId == accountId);
+        }
     }
 }
 
