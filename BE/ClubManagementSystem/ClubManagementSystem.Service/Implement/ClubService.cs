@@ -1,4 +1,4 @@
-﻿using ClubManagementSystem.Repository.Entities;
+using ClubManagementSystem.Repository.Entities;
 using ClubManagementSystem.Repository.Repositories;
 using ClubManagementSystem.Service.Interface;
 using ClubManagementSystem.Service.Models.Common;
@@ -103,15 +103,42 @@ namespace ClubManagementSystem.Service.Implement
             };
         }
 
-        public async Task<PagedResponse<object>> GetAllClubs(ClubFilterRequest request, int page, int pageSize)
+        public async Task<PagedResponse<object>> GetAllClubs(ClubFilterRequest request, int page, int pageSize, int? accountId = null, string? role = null)
         {
             var entity = request.Adapt<Club>();
+
+            // Logic filter theo role:
+            // - Nếu role = "User" (Student): chỉ thấy Public clubs + Private clubs cùng department
+            // - Nếu role = "Admin" hoặc không có role: thấy tất cả (hoặc theo filter request)
+            int? departmentIdForFilter = request.DeparmentId;
+            bool? isPublicFilter = request.IsPublic;
+            
+            if (accountId.HasValue && role == "User")
+            {
+                // Lấy Student từ AccountId để lấy DepartmentId
+                var student = await _studentRepository.GetByAccountIdAsync(accountId.Value);
+                if (student != null)
+                {
+                    // Student chỉ thấy: Public clubs HOẶC Private clubs cùng department
+                    // Repository sẽ tự động filter: IsPublic = true OR DeparmentId = student.DeparmentId
+                    departmentIdForFilter = student.DeparmentId;
+                    // Không set IsPublic để repository tự động áp dụng logic: Public OR cùng department
+                    isPublicFilter = null;
+                }
+                else
+                {
+                    // Nếu không tìm thấy Student, chỉ cho thấy Public clubs
+                    departmentIdForFilter = null;
+                    isPublicFilter = true;
+                }
+            }
+            // Nếu role = "Admin" hoặc không có accountId: giữ nguyên filter từ request
 
             // Sử dụng logic lọc tùy chỉnh trong Repository
             var query = _clubRepository.GetFilteredClub(
                 entity,
-                request.IsPublic,
-                request.DeparmentId
+                isPublicFilter,
+                departmentIdForFilter
             );
 
             IQueryable resultQuery = query;
