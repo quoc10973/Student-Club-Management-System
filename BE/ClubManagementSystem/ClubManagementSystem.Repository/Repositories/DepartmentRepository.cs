@@ -1,4 +1,4 @@
-﻿using ClubManagementSystem.Repository.Basic;
+using ClubManagementSystem.Repository.Basic;
 using ClubManagementSystem.Repository.DBContext;
 using ClubManagementSystem.Repository.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +30,21 @@ namespace ClubManagementSystem.Repository.Repositories
                 query = query.Where(d => d.Status.Equals(department.Status));
 
             return query.OrderBy(d => d.Id);
+        }
+
+        public async Task<Deparment?> GetFirstActiveDepartmentAsync()
+        {
+            return await _context.Set<Deparment>()
+                .Where(d => d.Status == "Active")
+                .OrderBy(d => d.Id)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<Deparment?> GetFirstDepartmentAsync()
+        {
+            return await _context.Set<Deparment>()
+                .OrderBy(d => d.Id)
+                .FirstOrDefaultAsync();
         }
     }
 }

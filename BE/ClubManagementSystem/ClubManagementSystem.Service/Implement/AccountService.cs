@@ -1,4 +1,4 @@
-﻿using ClubManagementSystem.Repository.Entities;
+using ClubManagementSystem.Repository.Entities;
 using ClubManagementSystem.Repository.Repositories;
 using ClubManagementSystem.Service.Interface;
 using ClubManagementSystem.Service.Models.Common;
@@ -202,6 +202,11 @@ namespace ClubManagementSystem.Service.Implement
         public async Task<Account?> GetByUsernameAsync(string username)
         {
             return await _accountRepository.GetUserByUsername(username);
+        }
+
+        public async Task<Account?> GetByEmailAsync(string email)
+        {
+            return await _accountRepository.GetByEmailAsync(email);
         }
     }
 }

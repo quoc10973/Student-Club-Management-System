@@ -1,4 +1,4 @@
-﻿using ClubManagementSystem.Service.Interface;
+using ClubManagementSystem.Service.Interface;
 using ClubManagementSystem.Service.Models.Request;
 using ClubManagementSystem.Service.Models.Response;
 using Microsoft.AspNetCore.Authorization;
@@ -8,6 +8,7 @@ using System;
 namespace ClubManagementSystem.API.Controllers
 {
     [Route("api/clubs")]
+    [Authorize]
     [ApiController]
     public class ClubController : ControllerBase
     {
@@ -27,7 +28,26 @@ namespace ClubManagementSystem.API.Controllers
         {
             try
             {
-                var clubs = await _clubService.GetAllClubs(filter, page, pageSize);
+                // Lấy accountId và role từ JWT token (nếu có)
+                int? accountId = null;
+                string? role = null;
+                
+                if (User.Identity?.IsAuthenticated == true)
+                {
+                    var accountIdClaim = User.FindFirst("accountId") ?? User.FindFirst("Id");
+                    if (accountIdClaim != null && int.TryParse(accountIdClaim.Value, out var parsedAccountId))
+                    {
+                        accountId = parsedAccountId;
+                    }
+                    
+                    var roleClaim = User.FindFirst(System.Security.Claims.ClaimTypes.Role) ?? User.FindFirst("role");
+                    if (roleClaim != null)
+                    {
+                        role = roleClaim.Value;
+                    }
+                }
+
+                var clubs = await _clubService.GetAllClubs(filter, page, pageSize, accountId, role);
                 return Ok(clubs);
             }
             catch (Exception ex)

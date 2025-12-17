@@ -1,4 +1,4 @@
-﻿using ClubManagementSystem.Repository.Entities;
+using ClubManagementSystem.Repository.Entities;
 using ClubManagementSystem.Service.Models.Common;
 using ClubManagementSystem.Service.Models.Request;
 using ClubManagementSystem.Service.Models.Response;
@@ -18,5 +18,6 @@ namespace ClubManagementSystem.Service.Interface
         Task<ApiResponse<AccountResponse>> UpdateAsync(int id, AccountRequest request);
         Task<ApiResponse<bool>> DeleteAsync(int id);
         Task<Account?> GetByUsernameAsync(string username);
+        Task<Account?> GetByEmailAsync(string email);
     }
 }
