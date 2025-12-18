@@ -22,7 +22,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFE", policy =>
     {
         policy.WithOrigins(
-                "http://localhost:3000"
+                "http://localhost:3000",
+                "https://prn-232.vercel.app"
             )
             .AllowAnyHeader()
             .AllowAnyMethod();
