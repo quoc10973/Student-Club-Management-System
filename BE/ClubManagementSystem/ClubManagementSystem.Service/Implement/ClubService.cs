@@ -294,11 +294,22 @@ namespace ClubManagementSystem.Service.Implement
                 };
             }
 
-            // 3. Tìm membership của chính student này trong club
+            // 3. Kiểm tra student có nằm trong department của club không
+            if (student.DeparmentId != club.DeparmentId)
+            {
+                return new ApiResponse<bool>
+                {
+                    Success = false,
+                    Message = "Student doesn't belong in the same department as club.",
+                    Data = false
+                };
+            }
+
+            // 4. Tìm membership của chính student này trong club
             var membershipOfStudent = await _clubMembershipRepository
                 .FirstOrDefaultAsync(cm => cm.ClubId == clubId && cm.StudentId == studentId);
 
-            // 4. Nếu student chưa có membership trong club -> TẠO MỚI LEADER
+            // 5. Nếu student chưa có membership trong club -> TẠO MỚI LEADER
             if (membershipOfStudent == null)
             {
                 var newMembership = new ClubMembership
@@ -326,7 +337,7 @@ namespace ClubManagementSystem.Service.Implement
             }
             else
             {
-                // 5. Student đã có membership trong club -> nâng lên Leader
+                // 6. Student đã có membership trong club -> nâng lên Leader
                 membershipOfStudent.ClubRole = "Leader";
                 membershipOfStudent.Status = "Active";
                 membershipOfStudent.ApprovedAt = DateTime.UtcNow;
