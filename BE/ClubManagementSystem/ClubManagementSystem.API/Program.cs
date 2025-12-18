@@ -146,11 +146,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("AllowFE");
 app.UseAuthentication();
 
 app.UseAuthorization();
-app.UseCors("AllowFE");
+
 app.MapControllers();
 
 app.Run();
