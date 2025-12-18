@@ -28,6 +28,9 @@ services:
       - JwtConfig__Audience=StudenClubManagementUser
       - JwtConfig__Key=W$7gN!f82Qz@Rk3L^p0Xv91#HcT*Mb46sYjUeDZwAqF5rP8hC
       - JwtConfig__ExpireMinutes=30
+      - Cors__AllowedOrigins__0=http://localhost:3000
+      - Google__ClientId=1052449589758-3f3p62idfveieqm90pk3ovc6bn6eo6h4.apps.googleusercontent.com
+      - Google__ClientSecret=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
     ports:
       - "8080:8080"
       - "8081:8081"
