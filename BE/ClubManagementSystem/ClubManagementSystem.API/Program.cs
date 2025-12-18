@@ -21,12 +21,14 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFE", policy =>
     {
-        policy.WithOrigins(corsOrigins)
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        policy.WithOrigins(
+                "http://localhost:3000"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
