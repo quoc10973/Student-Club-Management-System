@@ -25,6 +25,18 @@ namespace ClubManagementSystem.Service.Implement
 
         public async Task<ApiResponse<StudentResponse>> CreateAsync(StudentRequest request)
         {
+            // Check if code already exists
+            var existingStudent = await GetByCodeAsync(request.Code);
+            if (existingStudent != null)
+            {
+                return new ApiResponse<StudentResponse>
+                {
+                    Success = false,
+                    Message = "Code is existed.",
+                    Data = null
+                };
+            }
+
             var entity = request.Adapt<Student>();
             entity.CreatedAt = DateTime.UtcNow;
             var affacted = await _studentRepository.CreateAsync(entity);
@@ -163,6 +175,19 @@ namespace ClubManagementSystem.Service.Implement
                     Data = null
                 };
             }
+
+            // Check if code already exists for another student
+            var existingStudent = await GetByCodeAsync(request.Code);
+            if (existingStudent != null && existingStudent.Id != id)
+            {
+                return new ApiResponse<StudentResponse>
+                {
+                    Success = false,
+                    Message = "Code is existed.",
+                    Data = null
+                };
+            }
+
             entity.AccountId = request.AccountId;
             entity.DeparmentId = request.DeparmentId;
             entity.Status = request.Status;
@@ -187,6 +212,11 @@ namespace ClubManagementSystem.Service.Implement
                     Data = null
                 };
             }
+        }
+
+        public async Task<Student?> GetByCodeAsync(string code)
+        {
+            return await _studentRepository.GetByCodeAsync(code);
         }
     }
 }

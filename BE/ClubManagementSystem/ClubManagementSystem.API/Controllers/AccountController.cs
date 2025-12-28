@@ -71,7 +71,7 @@ namespace ClubManagementSystem.API.Controllers
                 }
                 else
                 {
-                    return BadRequest(result.Message);
+                    return BadRequest(result);
                 }
             }
             catch (Exception ex)

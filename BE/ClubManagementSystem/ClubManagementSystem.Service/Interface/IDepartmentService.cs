@@ -1,4 +1,5 @@
-﻿using ClubManagementSystem.Service.Models.Common;
+using ClubManagementSystem.Repository.Entities;
+using ClubManagementSystem.Service.Models.Common;
 using ClubManagementSystem.Service.Models.Request;
 using ClubManagementSystem.Service.Models.Response;
 using System;
@@ -16,5 +17,6 @@ namespace ClubManagementSystem.Service.Interface
         Task<ApiResponse<DepartmentResponse>> CreateAsync(DepartmentRequest request);
         Task<ApiResponse<DepartmentResponse>> UpdateAsync(int id, DepartmentRequest request);
         Task<ApiResponse<bool>> DeleteAsync(int id);
+        Task<Deparment?> GetByCodeNameAsync(string codeName);
     }
 }

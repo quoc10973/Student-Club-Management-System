@@ -48,7 +48,7 @@ builder.Services.AddSwaggerGen(options =>
             Id = JwtBearerDefaults.AuthenticationScheme
         }
     };
-    options.SwaggerDoc("v1", new() { Title = "Coffe Store Management Lab 2 API", Version = "v1" });
+    options.SwaggerDoc("v1", new() { Title = "ClubManagementSystem", Version = "v1" });
     options.AddSecurityDefinition("Bearer", jwtSecurityScheme);
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
@@ -149,7 +149,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("AllowFE");
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();

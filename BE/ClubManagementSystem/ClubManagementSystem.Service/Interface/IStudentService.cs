@@ -17,8 +17,11 @@ namespace ClubManagementSystem.Service.Interface
         Task<ApiResponse<StudentResponse>> CreateAsync(StudentRequest request);
         Task<ApiResponse<StudentResponse>> UpdateAsync(int id, StudentRequest request);
         Task<ApiResponse<bool>> DeleteAsync(int id);
+        Task<Student?> GetByCodeAsync(string code);
     }
 }
+
+
 
 
 
