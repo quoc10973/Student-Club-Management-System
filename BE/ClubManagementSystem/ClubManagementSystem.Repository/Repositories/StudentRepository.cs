@@ -36,8 +36,15 @@ namespace ClubManagementSystem.Repository.Repositories
             return _context.Students
                 .FirstOrDefaultAsync(s => s.AccountId == accountId);
         }
+
+        public async Task<Student?> GetByCodeAsync(string code)
+        {
+            return await _context.Students.FirstOrDefaultAsync(s => s.Code == code);
+        }
     }
 }
+
+
 
 
 

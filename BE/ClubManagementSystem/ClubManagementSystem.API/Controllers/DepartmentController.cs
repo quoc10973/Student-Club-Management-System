@@ -68,7 +68,7 @@ namespace ClubManagementSystem.API.Controllers
                 }
                 else
                 {
-                    return BadRequest(result.Message);
+                    return BadRequest(result);
                 }
             }
             catch (Exception ex)
@@ -97,7 +97,7 @@ namespace ClubManagementSystem.API.Controllers
                     {
                         return NotFound(result.Message);
                     }
-                    return BadRequest(result.Message);
+                    return BadRequest(result);
                 }
             }
             catch (Exception ex)

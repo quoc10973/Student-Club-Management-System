@@ -1,4 +1,4 @@
-﻿using ClubManagementSystem.Repository.Entities;
+using ClubManagementSystem.Repository.Entities;
 using ClubManagementSystem.Repository.Repositories;
 using ClubManagementSystem.Service.Interface;
 using ClubManagementSystem.Service.Models.Common;
@@ -26,6 +26,21 @@ namespace ClubManagementSystem.Service.Implement
 
         public async Task<ApiResponse<DepartmentResponse>> CreateAsync(DepartmentRequest request)
         {
+            // Check if CodeName already exists
+            if (!string.IsNullOrEmpty(request.CodeName))
+            {
+                var existingDepartment = await GetByCodeNameAsync(request.CodeName);
+                if (existingDepartment != null)
+                {
+                    return new ApiResponse<DepartmentResponse>
+                    {
+                        Success = false,
+                        Message = "CodeName is existed.",
+                        Data = null
+                    };
+                }
+            }
+
             var entity = request.Adapt<Deparment>();
             entity.CreatedAt = DateTime.UtcNow;
             var affacted = await _departmentRepository.CreateAsync(entity);
@@ -157,6 +172,21 @@ namespace ClubManagementSystem.Service.Implement
                 };
             }
 
+            // Check if CodeName already exists for another department
+            if (!string.IsNullOrEmpty(request.CodeName))
+            {
+                var existingDepartment = await GetByCodeNameAsync(request.CodeName);
+                if (existingDepartment != null && existingDepartment.Id != id)
+                {
+                    return new ApiResponse<DepartmentResponse>
+                    {
+                        Success = false,
+                        Message = "CodeName is existed.",
+                        Data = null
+                    };
+                }
+            }
+
             // Cập nhật các trường từ request
             entity.CodeName = request.CodeName;
             entity.Name = request.Name;
@@ -179,6 +209,11 @@ namespace ClubManagementSystem.Service.Implement
                 Message = "Failed to update department.",
                 Data = null
             };
+        }
+
+        public async Task<Deparment?> GetByCodeNameAsync(string codeName)
+        {
+            return await _departmentRepository.GetByCodeNameAsync(codeName);
         }
     }
 }

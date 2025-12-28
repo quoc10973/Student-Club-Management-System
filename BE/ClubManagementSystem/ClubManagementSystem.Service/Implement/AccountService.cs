@@ -25,6 +25,18 @@ namespace ClubManagementSystem.Service.Implement
 
         public async Task<ApiResponse<AccountResponse>> CreateAsync(AccountRequest request)
         {
+            // Check if email already exists
+            var existingAccount = await GetByEmailAsync(request.Email);
+            if (existingAccount != null)
+            {
+                return new ApiResponse<AccountResponse>
+                {
+                    Success = false,
+                    Message = "Email is existed.",
+                    Data = null
+                };
+            }
+
             var entity = request.Adapt<Account>();
             entity.PasswordHash = HashPassword(request.Password);
             entity.CreatedAt = DateTime.UtcNow;
@@ -166,6 +178,19 @@ namespace ClubManagementSystem.Service.Implement
                     Data = null
                 };
             }
+
+            // Check if email already exists for another account
+            var existingAccount = await GetByEmailAsync(request.Email);
+            if (existingAccount != null && existingAccount.Id != id)
+            {
+                return new ApiResponse<AccountResponse>
+                {
+                    Success = false,
+                    Message = "Email is existed.",
+                    Data = null
+                };
+            }
+
             entity.PasswordHash = HashPassword(request.Password);
             entity.FullName = request.FullName;
             entity.Email = request.Email;
